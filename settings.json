@@ -1,0 +1,11 @@
+{
+    "Test_List": ["syntheticTestCases","wrrPaperTestCases"],
+        
+    "Solver": "ida",
+    
+    "Precision": "single",
+    
+    "Version": "non-actors",
+    
+    "Executables": ["/Users/amedin/Research/SummaSundials/summa/bin/summa_sundials.exe"]
+}
