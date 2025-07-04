@@ -51,7 +51,7 @@ Once you have installed summa you can now set up the test cases. The test cases 
     - "Version": "non-actors"
 
 ### Using `summa_test_cases.py`
-Once you have set up the `test_settings.json` file. You then have to configure your setup with the `summa_test_cases.py` file. You run it with the following `python3 summa_test_cases.py [options]`. Below are a list of options:
+Once you have set up the `test_settings.json` file, you then have to configure your setup with the `summa_test_cases.py` file. You run it with the following `python3 summa_test_cases.py [options]`. Below are a list of options:
 - init
 - run
 - reset
