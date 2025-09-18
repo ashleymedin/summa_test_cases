@@ -14,7 +14,7 @@ soilStress                      NoahType        ! (05) choice of function for th
 stomResist                      BallBerry       ! (06) choice of function for stomatal resistance
 ! ***********************************************************************************************************************
 num_method                      kinsol          ! (07) choice of numerical method
-fDerivMeth                      analytic        ! (08) method used to calculate Jacobian
+fDerivMeth                      analytic        ! (08) method used to calculate flux derivatives
 LAI_method                      specified       ! (09) method used to determine LAI and SAI
 f_Richards                      mixdform        ! (10) form of Richard's equation
 groundwatr                      qTopmodl        ! (11) choice of groundwater parameterization
@@ -68,8 +68,8 @@ infRateMax                      topmodel_GA     ! (31) choice of infiltration ra
 ! kinsol    ! SUNDIALS backward Euler solution using Kinsol
 ! ida       ! SUNDIALS solution using IDA
 ! -----------------------------------------------------------------------------------------------
-! (08) method used to calculate Jacobian
-! numericl  ! numerical derivatives
+! (08) method used to calculate flux derivatives
+! numericl  ! numerical derivatives (only works with SUNDIALS)
 ! analytic  ! analytical derivatives
 ! -----------------------------------------------------------------------------------------------
 ! (09) method used to determine LAI and SAI
@@ -176,4 +176,16 @@ infRateMax                      topmodel_GA     ! (31) choice of infiltration ra
 ! GreenAmpt   ! Green-Ampt
 ! topmodel_GA ! Green-Ampt with TOPMODEL conductivity rate
 ! noInfExc    ! no infiltration excess runoff (saturation excess may still occur)
+! -----------------------------------------------------------------------------------------------
+! (32) choice of infiltration excess (IE) surface runoff parameterization
+! zero_IE      ! zero IE surface runoff
+! homegrown_IE ! IE component of SUMMA's original liquid flux parameterization (default)
+! -----------------------------------------------------------------------------------------------
+! (33) choice of saturation excess (SE) surface runoff parameterization
+! zero_SE      ! zero SE surface runoff
+! homegrown_SE ! SE component of SUMMA's original liquid flux parameterization (default)
+! FUSEPRMS     ! FUSE PRMS surface runoff parameterization
+! FUSEAVIC     ! FUSE ARNO/VIC surface runoff parameterization
+! FUSETOPM     ! FUSE TOPMODEL surface runoff parameterization
 ! ***********************************************************************************************
+

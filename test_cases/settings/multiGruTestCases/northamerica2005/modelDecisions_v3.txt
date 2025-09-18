@@ -66,8 +66,8 @@ subRouting                      timeDlay        ! (29) choice of method for sub-
 ! kinsol    ! SUNDIALS backward Euler solution using Kinsol
 ! ida       ! SUNDIALS solution using IDA
 ! -----------------------------------------------------------------------------------------------
-! (08) method used to calculate Jacobian
-! numericl  ! numerical derivatives
+! (08) method used to calculate flux derivatives
+! numericl  ! numerical derivatives (only works with SUNDIALS)
 ! analytic  ! analytical derivatives
 ! -----------------------------------------------------------------------------------------------
 ! (09) method used to determine LAI and SAI

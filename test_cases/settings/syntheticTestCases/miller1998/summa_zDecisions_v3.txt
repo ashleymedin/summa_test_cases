@@ -14,7 +14,7 @@ soilStress                      NoahType       ! (05) choice of function for the
 stomResist                      BallBerry      ! (06) choice of function for stomatal resistance
 ! ***********************************************************************************************************************
 num_method                      itertive       ! (07) choice of numerical method
-fDerivMeth                      analytic       ! (08) method used to calculate Jacobian
+fDerivMeth                      analytic       ! (08) method used to calculate flux derivatives
 LAI_method                      monTable       ! (09) method used to determine LAI and SAI
 f_Richards                      mixdform       ! (10) form of Richard's equation
 groundwatr                      noXplict       ! (11) choice of groundwater parameterization
@@ -64,8 +64,7 @@ subRouting                      timeDlay       ! (29) choice of method for sub-g
 ! (07) choice of numerical method
 ! itertive
 ! -----------------------------------------------------------------------------------------------
-! (08) method used to calculate Jacobian
-! numericl  ! numerical derivatives
+! (08) method used to calculate flux derivatives
 ! analytic  ! analytical derivatives
 ! -----------------------------------------------------------------------------------------------
 ! (09) method used to determine LAI and SAI

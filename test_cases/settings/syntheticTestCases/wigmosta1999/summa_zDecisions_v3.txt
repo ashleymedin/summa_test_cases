@@ -64,8 +64,7 @@ subRouting                      timeDlay        ! (29) choice of method for sub-
 ! (07) choice of numerical method
 ! itertive
 ! -----------------------------------------------------------------------------------------------
-! (08) method used to calculate Jacobian
-! numericl  ! numerical derivatives
+! (08) method used to calculate flux derivatives
 ! analytic  ! analytical derivatives
 ! -----------------------------------------------------------------------------------------------
 ! (09) method used to determine LAI and SAI
