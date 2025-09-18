@@ -13,7 +13,7 @@ vegeParTbl                      USGS            ! (04) vegetation category datas
 soilStress                      NoahType        ! (05) choice of function for the soil moisture control on stomatal resistance
 stomResist                      BallBerry       ! (06) choice of function for stomatal resistance
 ! ***********************************************************************************************************************
-num_method                      ida             ! (07) choice of numerical method
+num_method                      homegrown       ! (07) choice of numerical method
 fDerivMeth                      analytic        ! (08) method used to calculate Jacobian
 LAI_method                      monTable        ! (09) method used to determine LAI and SAI
 f_Richards                      mixdform        ! (10) form of Richard's equation
@@ -38,6 +38,8 @@ spatial_gw                      localColumn     ! (28) choice of method for the 
 subRouting                      timeDlay        ! (29) choice of method for sub-grid routing
 nrgConserv                      enthalpyForm    ! (30) choice of variable in energy equations (BE residual or IDA state variable)
 infRateMax                      GreenAmpt       ! (31) choice of infiltration rate method
+surfRun_IE                      homegrown_IE    ! (32) infiltration excess surface runoff parameterization
+surfRun_SE                      homegrown_SE    ! (33) saturation excess surface runoff parameterization
 ! ***********************************************************************************************
 ! ***** description of the options available -- nothing below this point is read ****************
 ! ***********************************************************************************************
@@ -117,7 +119,7 @@ infRateMax                      GreenAmpt       ! (31) choice of infiltration ra
 ! difTrans  ! parameterized as a function of diffuse transmissivity
 ! -----------------------------------------------------------------------------------------------
 ! (19) choice of parameterization for snow interception
-! stickySnow  ! maximum interception capacity an increasing function of temerature
+! stickySnow  ! maximum interception capacity an increasing function of temperature
 ! lightSnow   ! maximum interception capacity an inverse function of new snow density
 ! -----------------------------------------------------------------------------------------------
 ! (20) choice of wind profile
@@ -176,4 +178,15 @@ infRateMax                      GreenAmpt       ! (31) choice of infiltration ra
 ! GreenAmpt   ! Green-Ampt
 ! topmodel_GA ! Green-Ampt with TOPMODEL conductivity rate
 ! noInfExc    ! no infiltration excess runoff (saturation excess may still occur)
+! -----------------------------------------------------------------------------------------------
+! (32) choice of infiltration excess (IE) surface runoff parameterization
+! zero_IE      ! zero IE surface runoff
+! homegrown_IE ! IE component of SUMMA's original liquid flux parameterization (default)
+! -----------------------------------------------------------------------------------------------
+! (33) choice of saturation excess (SE) surface runoff parameterization
+! zero_SE      ! zero SE surface runoff
+! homegrown_SE ! SE component of SUMMA's original liquid flux parameterization (default)
+! FUSEPRMS     ! FUSE PRMS surface runoff parameterization
+! FUSEAVIC     ! FUSE ARNO/VIC surface runoff parameterization
+! FUSETOPM     ! FUSE TOPMODEL surface runoff parameterization
 ! ***********************************************************************************************

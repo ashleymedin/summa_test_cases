@@ -13,7 +13,7 @@ vegeParTbl                      USGS            ! (04) vegetation category datas
 soilStress                      NoahType        ! (05) choice of function for the soil moisture control on stomatal resistance
 stomResist                      BallBerry       ! (06) choice of function for stomatal resistance
 ! ***********************************************************************************************************************
-num_method                      ida             ! (07) choice of numerical method
+num_method                      itertive        ! (07) choice of numerical method
 fDerivMeth                      analytic        ! (08) method used to calculate Jacobian
 LAI_method                      monTable        ! (09) method used to determine LAI and SAI
 f_Richards                      mixdform        ! (10) form of Richard's equation
@@ -36,8 +36,6 @@ thCondSnow                      jrdn1991        ! (26) choice of thermal conduct
 thCondSoil                      mixConstit      ! (27) choice of thermal conductivity representation for soil
 spatial_gw                      localColumn     ! (28) choice of method for the spatial representation of groundwater
 subRouting                      timeDlay        ! (29) choice of method for sub-grid routing
-nrgConserv                      enthalpyForm    ! (30) choice of variable in energy equations (BE residual or IDA state variable)
-infRateMax                      GreenAmpt       ! (31) choice of infiltration rate method
 ! ***********************************************************************************************
 ! ***** description of the options available -- nothing below this point is read ****************
 ! ***********************************************************************************************
@@ -64,9 +62,7 @@ infRateMax                      GreenAmpt       ! (31) choice of infiltration ra
 ! Jarvis    ! Jarvis
 ! -----------------------------------------------------------------------------------------------
 ! (07) choice of numerical method
-! homegrown ! home-grown backward Euler
-! kinsol    ! SUNDIALS backward Euler solution using Kinsol
-! ida       ! SUNDIALS solution using IDA
+! itertive
 ! -----------------------------------------------------------------------------------------------
 ! (08) method used to calculate Jacobian
 ! numericl  ! numerical derivatives
@@ -117,7 +113,7 @@ infRateMax                      GreenAmpt       ! (31) choice of infiltration ra
 ! difTrans  ! parameterized as a function of diffuse transmissivity
 ! -----------------------------------------------------------------------------------------------
 ! (19) choice of parameterization for snow interception
-! stickySnow  ! maximum interception capacity an increasing function of temerature
+! stickySnow  ! maximum interception capacity an increasing function of temperature
 ! lightSnow   ! maximum interception capacity an inverse function of new snow density
 ! -----------------------------------------------------------------------------------------------
 ! (20) choice of wind profile
@@ -166,14 +162,4 @@ infRateMax                      GreenAmpt       ! (31) choice of infiltration ra
 ! (29) choice of method for sub-grid routing
 ! timeDlay  ! time-delay histogram
 ! qInstant  ! instantaneous routing
-! -----------------------------------------------------------------------------------------------
-! (30) choice of variable in energy equations (BE residual or IDA state variable)
-! closedForm      ! use temperature with closed form heat capacity
-! enthalpyFormLU  ! use enthalpy with soil temperature-enthalpy lookup tables
-! enthalpyForm    ! use enthalpy with soil temperature-enthalpy analytical solutions
-! -----------------------------------------------------------------------------------------------
-! (31) choice of infiltration rate method
-! GreenAmpt   ! Green-Ampt
-! topmodel_GA ! Green-Ampt with TOPMODEL conductivity rate
-! noInfExc    ! no infiltration excess runoff (saturation excess may still occur)
 ! ***********************************************************************************************
