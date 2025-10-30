@@ -8,7 +8,7 @@
 ! (3) the simulation start/end times must be within single quotes
 ! ***********************************************************************************************************************
 ! ***********************************************************************************************************************
-soilCatTbl                      ROSETTA         ! (03) soil-category dateset
+soilCatTbl                      ROSETTA         ! (03) soil-category dataset
 vegeParTbl                      USGS            ! (04) vegetation category dataset
 soilStress                      NoahType        ! (05) choice of function for the soil moisture control on stomatal resistance
 stomResist                      Jarvis          ! (06) choice of function for stomatal resistance
@@ -43,7 +43,7 @@ subRouting                      timeDlay        ! (29) choice of method for sub-
 ! (01) simulation start time
 ! (02) simulation end time
 ! -----------------------------------------------------------------------------------------------
-! (03) soil-category dateset
+! (03) soil-category dataset
 ! STAS      ! STATSGO dataset
 ! STAS-RUC  ! ??
 ! ROSETTA   ! merged Rosetta table with STAS-RUC
