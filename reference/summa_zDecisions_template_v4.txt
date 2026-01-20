@@ -38,8 +38,7 @@ spatial_gw                      localColumn     ! (28) choice of method for the 
 subRouting                      timeDlay        ! (29) choice of method for sub-grid routing
 nrgConserv                      enthalpyFormLU  ! (30) choice of variable in energy equations (BE residual or IDA state variable)
 infRateMax                      GreenAmpt       ! (31) choice of infiltration rate method
-surfRun_IE                      homegrown_IE    ! (32) infiltration excess surface runoff parameterization
-surfRun_SE                      homegrown_SE    ! (33) saturation excess surface runoff parameterization
+surfRun_SE                      homegrown_SE    ! (32) saturation excess surface runoff parameterization
 ! ***********************************************************************************************
 ! ***** description of the options available -- nothing below this point is read ****************
 ! ***********************************************************************************************
@@ -179,11 +178,7 @@ surfRun_SE                      homegrown_SE    ! (33) saturation excess surface
 ! topmodel_GA ! Green-Ampt with TOPMODEL conductivity rate
 ! noInfExc    ! no infiltration excess runoff (saturation excess may still occur)
 ! -----------------------------------------------------------------------------------------------
-! (32) choice of infiltration excess (IE) surface runoff parameterization
-! zero_IE      ! zero IE surface runoff
-! homegrown_IE ! IE component of SUMMA's original liquid flux parameterization (default)
-! -----------------------------------------------------------------------------------------------
-! (33) choice of saturation excess (SE) surface runoff parameterization
+! (32) choice of saturation excess (SE) surface runoff parameterization
 ! zero_SE      ! zero SE surface runoff
 ! homegrown_SE ! SE component of SUMMA's original liquid flux parameterization (default)
 ! FUSEPRMS     ! FUSE PRMS surface runoff parameterization

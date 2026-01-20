@@ -177,11 +177,7 @@ infRateMax                      topmodel_GA     ! (31) choice of infiltration ra
 ! topmodel_GA ! Green-Ampt with TOPMODEL conductivity rate
 ! noInfExc    ! no infiltration excess runoff (saturation excess may still occur)
 ! -----------------------------------------------------------------------------------------------
-! (32) choice of infiltration excess (IE) surface runoff parameterization
-! zero_IE      ! zero IE surface runoff
-! homegrown_IE ! IE component of SUMMA's original liquid flux parameterization (default)
-! -----------------------------------------------------------------------------------------------
-! (33) choice of saturation excess (SE) surface runoff parameterization
+! (32) choice of saturation excess (SE) surface runoff parameterization
 ! zero_SE      ! zero SE surface runoff
 ! homegrown_SE ! SE component of SUMMA's original liquid flux parameterization (default)
 ! FUSEPRMS     ! FUSE PRMS surface runoff parameterization
