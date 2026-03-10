@@ -183,5 +183,12 @@ infRateMax                      topmodel_GA     ! (31) choice of infiltration ra
 ! FUSEPRMS     ! FUSE PRMS surface runoff parameterization
 ! FUSEAVIC     ! FUSE ARNO/VIC surface runoff parameterization
 ! FUSETOPM     ! FUSE TOPMODEL surface runoff parameterization
+! -----------------------------------------------------------------------------------------------
+! (33) method used to read forcing data
+! readPerStep    ! read forcing data per time step (default)
+! readFullSeries ! read full forcing series in a buffered read
+! -----------------------------------------------------------------------------------------------
+! (34) method used to write model output
+! writePerStep    ! write model output per time step (default)
+! writeFullSeries ! write all data for a given output file in a buffered read
 ! ***********************************************************************************************
-

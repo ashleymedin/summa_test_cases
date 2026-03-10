@@ -39,6 +39,8 @@ subRouting                      timeDlay        ! (29) choice of method for sub-
 nrgConserv                      enthalpyForm    ! (30) choice of variable in energy equations (BE residual or IDA state variable)
 infRateMax                      GreenAmpt       ! (31) choice of infiltration rate method
 surfRun_SE                      homegrown_SE    ! (32) saturation excess surface runoff parameterization
+read_force                      readPerStep     ! (33) method used to read forcing data
+write_buff                      writePerStep    ! (34) method used to write model output
 ! ***********************************************************************************************
 ! -----------------------------------------------------------------------------------------------
 ! (01) simulation start time
@@ -243,5 +245,12 @@ surfRun_SE                      homegrown_SE    ! (32) saturation excess surface
 ! FUSEPRMS     ! FUSE PRMS surface runoff parameterization
 ! FUSEAVIC     ! FUSE ARNO/VIC surface runoff parameterization
 ! FUSETOPM     ! FUSE TOPMODEL surface runoff parameterization
+! -----------------------------------------------------------------------------------------------
+! (33) method used to read forcing data
+! readPerStep    ! read forcing data per time step (default)
+! readFullSeries ! read full forcing series in a buffered read
+! -----------------------------------------------------------------------------------------------
+! (34) method used to write model output
+! writePerStep    ! write model output per time step (default)
+! writeFullSeries ! write all data for a given output file in a buffered read
 ! ***********************************************************************************************
-
