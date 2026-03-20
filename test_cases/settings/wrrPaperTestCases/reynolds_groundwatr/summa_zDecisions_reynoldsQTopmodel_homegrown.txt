@@ -36,7 +36,7 @@ thCondSnow                      jrdn1991        ! (26) choice of thermal conduct
 thCondSoil                      funcSoilWet     ! (27) choice of thermal conductivity representation for soil
 spatial_gw                      localColumn     ! (28) choice of method for the spatial representation of groundwater
 subRouting                      timeDlay        ! (29) choice of method for sub-grid routing
-nrgConserv                      enthalpyForm    ! (30) choice of variable in energy equations (BE residual or IDA state variable)
+nrgConserv                      enthalpyFormAN  ! (30) choice of variable in energy equations (BE residual or IDA state variable)
 infRateMax                      topmodel_GA     ! (31) choice of infiltration rate method
 ! ***********************************************************************************************
 ! ***** description of the options available -- nothing below this point is read ****************
@@ -169,8 +169,8 @@ infRateMax                      topmodel_GA     ! (31) choice of infiltration ra
 ! -----------------------------------------------------------------------------------------------
 ! (30) choice of variable in energy equations (BE residual or IDA state variable)
 ! closedForm      ! use temperature with closed form heat capacity
-! enthalpyFormLU  ! use enthalpy with soil temperature-enthalpy lookup tables
-! enthalpyForm    ! use enthalpy with soil temperature-enthalpy analytical solutions
+! enthalpyForm    ! use enthalpy with soil temperature-enthalpy lookup tables
+! enthalpyFormAN  ! use enthalpy with soil temperature-enthalpy analytical solutions
 ! -----------------------------------------------------------------------------------------------
 ! (31) choice of infiltration rate method
 ! GreenAmpt   ! Green-Ampt
