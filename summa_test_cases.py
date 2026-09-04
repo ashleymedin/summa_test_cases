@@ -124,6 +124,7 @@ def buildRunCommand(exe, file_manager, suffix, num_gru, version):
     if version == "actors":
         cmd += ["-c", os.path.abspath(ACTORS_CONFIG)]
     cmd += ["-g", "1", num_gru]
+    #cmd += ["-p", "t"] # print timestep
     return cmd
 
 
