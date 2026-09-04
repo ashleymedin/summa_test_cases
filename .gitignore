@@ -1,2 +1,6 @@
 test_cases/output
 fileManager_*_test.txt
+timing_info.csv
+__pycache__/
+*.pyc
+.DS_Store

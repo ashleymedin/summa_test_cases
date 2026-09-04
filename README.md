@@ -1,84 +1,180 @@
-# Summa Test Cases
-This repository serves as a testing framework for SUMMA and Summa-Actors, designed to validate the integrity of the test cases and facilitate the comparison of different SUMMA versions, expanding on https://github.com/CH-Earth/laughTests.
-The framework operates via a `summa_test_cases.py` script, which, in conjunction with the `settings.json` configuration file, orchestrates the testing procedures.
+# SUMMA Test Cases
 
+A testing framework for SUMMA and SUMMA-Actors. It runs a set of small,
+fast-running test cases through one or more SUMMA executables and compares the
+output, so you can check that a code change (or the actors vs non-actors build)
+does not change the results. It expands on
+<https://github.com/CH-Earth/laughTests>.
 
-## Installing the Summa Test Cases
-To install the testing framework, execute the following command:
-```bash
-git clone https://github.com/CH-Earth/summa_test_cases/summa_test_cases.git 
+Everything is driven by `summa_test_cases.py` together with the `settings.json`
+configuration file.
+
+## Directory structure
+
+```
+summa_test_cases
+├── summa_test_cases.py     driver: run / clean
+├── settings.json           user configuration (see below)
+├── test_inventory.json     the list of available test cases
+├── test_cases
+│   ├── input_data          forcing data for each test (single + double precision)
+│   ├── settings            per-test settings + file-manager templates
+│   └── output              created by `run`; holds run output and logs (gitignored)
+├── post_scripts
+│   ├── verify_output.py    quantify output / time / memory changes along one axis
+│   └── timing_info.py      gather every run's time + memory into timing_info.csv
+├── tools
+│   └── convert_to_float.py regenerate the single-precision forcing files
+├── summa_actors_config.json  config passed to the "actors" executable
+└── reference               SUMMA modelDecisions templates (v3 and v4)
 ```
 
-## Directory Structure
-The directory structure of the summa_test_cases repository is as follows:
+## Installing
+
 ```bash
-|-- summa_test_cases
-   | -- post_scripts
-   | -- run_scripts
-   | -- test_cases
-      | -- input_data
-      | -- settings
-      | -- output
-   | -- utils
-   | -- .gitignore
-   | -- summa_test_cases.py
-   | -- README.md
-   | -- settings.json
-   | -- test_inventory.json
+git clone https://github.com/CH-Earth/summa_test_cases.git
 ```
 
-The `test_cases` directory will contain all the data for each of the available 
-tests. Within the `test_cases` directory, the `input_data` directory will contain the forcing data for each test, the `settings` directory will contain the file manager files for each test, and the `output` directory will be created when the tests are run.
+You also need a compiled SUMMA and/or SUMMA-Actors executable. See
+<https://summa.readthedocs.io/en/latest/SUMMA_documentation/> and the
+SUMMA-Actors framework.
 
-## Running the Summa Test Cases
-To run the test cases first you must install and compile SUMMA. This can be done with the documentation found here https://summa.readthedocs.io/en/latest/SUMMA_documentation/.
+## Configuration (`settings.json`)
 
-Once you have installed summa you can now set up the test cases. The test cases are configured through the `test_settings.json` file included in the summa_test_cases repository. This file will need to be modified to work in your environment and to run the specific tests you desire. The settings are configured by the user by modifying the value of the key-value pairs in the `test_settings.json` file. Detailed explanations of the key-value pairs are provided below:
+| Key | Meaning |
+| --- | --- |
+| `Test_List` | List of tests to run. Use any `name` from `test_inventory.json`, or a group: `"syntheticTestCases"`, `"wrrPaperTestCases"`, `"multiGruTestCases"`, or `"all"`. The multiGru tests take much longer than the rest. |
+| `Solver` | `homegrown`, `ida`, or `kinsol` for SUMMA v4, or `v3` for older builds. Selects which `summa_zDecisions_<Solver>.txt` the file manager points at. |
+| `Precision` | `single` or `double`. Selects which forcing file list (and therefore which forcing `.nc`) the file manager points at. |
+| `Version` | `non-actors` or `actors`. Picks the executable from `Executables`; `actors` also gets `-c summa_actors_config.json`. |
+| `Executables` | Map of `Version` → executable path. List both to compare, or just the one you use. |
+| `Tag` | Optional free-form string added to the output name. Bump it to keep an otherwise-identical rerun (e.g. after a rebuild) from overwriting the previous one. |
 
- - Test_List: This is a the list of test you wish to run. The directories and file manager files will automatically be set up by running the `summa_test_cases.py` file which instructions can be found in the `summa_test_cases.py` section below. For the test list, you can choose any test in test_inventory.json by name, or "all", "multiGruTestCases", "syntheticTestCases", or "wrrPaperTestCases". Note, the multiGru tests take significantly longer than the other tests.
-    - Example: "Test_List": ["celia1990", "colbeck1976", "miller1998", "mizoguchi1990", "vanderborght2005", "wigmosta1999", "reynolds_canopySrad_windPrfile_stomResist", "reynolds_groundwatr", "senator_alb_method", "umpqua_snowIncept"]
+`Version`, `Solver` and `Precision` are the three axes you can vary and compare.
+Any of them can be set in `settings.json` or overridden per run on the command
+line (`run actors ida double`).
+Every output file is stamped with all three (plus `Tag` if set):
 
- - Precision: Either use "single" or "double". This specifies what precision of forcing data to use for the test cases.
-    - Example: "Precision": "single",
+```
+<outFilePrefix>_<Version>_<Solver>_<Precision>[_<Tag>]_G<a>-<b>_timestep.nc
+```
 
- - Solver: Either use "homegrown", "ida", "kinsol" for V4 and "v3" for older implementations of SUMMA. This specifies what solver to use for the solution to summa. The file manager file will automatically be set up from your selection here.
-    - Example: "Solver": "homegrown",
+so runs that differ in any of them sit side by side in `test_cases/output`.
 
- - Summa_exe: Provide a full path to the summa or summa_sundials executable that you compiled.
-    - "Summa_Exe": "/absolute/path/to/summa.exe"
+Example (`settings.json`):
 
- - Version: actors or non-actors versions of the programs, they have some differences in setting up
-    - "Version": "non-actors"
-
-### Using `summa_test_cases.py`
-Once you have set up the `test_settings.json` file, you then have to configure your setup with the `summa_test_cases.py` file. You run it with the following `python3 summa_test_cases.py [options]`. Below are a list of options:
-- init
-- run
-- reset
-- clean
-
-The first command to use is `python3 summa_test_cases.py init`. This will set up all of the output directories and the file managers. After running init the next command to run is `python3 summa_test_cases.py run`. This will run all of the tests that you specified in the Test_List key in the `test_settings.json` file.
-
-If you plan to run more tests with multiple configurations use the `reset` option followed by `init` again. If you wish to delete everything including your generated output use `clean`.
-
-### EXAMPLE TEST_SETTINGS.json
 ```json
 {
-    "Test_List": ["all"],
-        
-    "Solver": "ida",
-
-    "Precision": "double",
-    
+    "Test_List": ["syntheticTestCases", "wrrPaperTestCases", "northamerica2005"],
+    "Solver": "homegrown",
+    "Precision": "single",
     "Version": "non-actors",
-    
-    "Executables": ["/Users/amedin/Research/SummaSundials/summa/bin/summa_sundials.exe"]
+    "Executables": {
+        "non-actors": "/path/to/summa/bin/summa_sundials.exe",
+        "actors": "/path/to/summa-actors/bin/summa_actors.exe"
+    }
 }
-
 ```
 
-### Note on Parameters
-We have left the v4 parameters out of the `summa_zLocalParamInfo.txt` files, so that the V3 Summa will run. If you would like to change these parameters, the lines to add to the files to use these parameters at default are the following (and change as you desire). The be_steps parameter applies to all V4 choices of solver, whereas the rel* and abs* parameters only apply to choice "ida". Note, these below are the recommended values for decision nrgConserv=closedForm. If nrgConserv=enthalpyForm or enthalpyForm  , the absTolTemp* values should be 1.0e2 instead of 1.0e-3. These values are the hard-coded default (with 1.0e-3 or 1.0e2 depending on your nrgConserv choice).
+The driver runs, per test:
+
+```
+non-actors:  <exe> -m <fileManager> -s <suffix> -g 1 <nGRU>
+actors:      <exe> -m <fileManager> -s <suffix> -c summa_actors_config.json -g 1 <nGRU>
+```
+
+where `<suffix>` is `<Version>_<Solver>_<Precision>[_<Tag>]`.
+
+`-m` always overrides the `file_manager_path` inside `summa_actors_config.json`,
+so the generated file managers are what actually get run.
+
+## Running
+
+```bash
+python3 summa_test_cases.py run              # run Test_List with settings.json Version/Solver/Precision
+python3 summa_test_cases.py run actors       # override an axis for this run (any of Version/Solver/Precision)
+python3 summa_test_cases.py run ida
+python3 summa_test_cases.py run actors ida double
+python3 summa_test_cases.py clean            # delete generated output and file managers
+```
+
+`run` creates the output dirs and regenerates the `fileManager_<subtest>_test.txt`
+for its effective `Version` / `Solver` / `Precision` every time, so **just pass
+the axis you want** — `run actors`, `run ida`, `run single`, or any combination.
+The value sets do not overlap, so the driver knows which axis each token is.
+
+`run` never deletes existing output — only `clean` does — so runs accumulate.
+The generated `*_test.txt` files and `test_cases/output` are gitignored.
+
+Each `run` also times each test and records its peak memory, writing a
+`time_<subtest>_<suffix>.json` next to the test's output.
+
+## Comparing along an axis
+
+Run the tests twice, changing exactly one of `Version` / `Solver` / `Precision`,
+then ask `verify_output.py` about that axis:
+
+```bash
+python3 summa_test_cases.py run homegrown
+python3 summa_test_cases.py run ida
+python3 post_scripts/verify_output.py Solver
+```
+
+Every axis works the same way:
+
+```bash
+python3 summa_test_cases.py run non-actors && python3 summa_test_cases.py run actors
+python3 post_scripts/verify_output.py Version
+
+python3 summa_test_cases.py run single && python3 summa_test_cases.py run double
+python3 post_scripts/verify_output.py Precision
+
+python3 post_scripts/verify_output.py Solver celia1990 mizoguchi1990   # only some tests
+python3 post_scripts/verify_output.py Version --per-var                # per-variable breakdown
+```
+
+For each test, `verify_output.py` pairs the output files that differ only along
+the chosen axis (holding the other components fixed) and prints two tables:
+
+* **output values** — over all output variables: number of differing values,
+  largest absolute difference, RMS difference, largest relative difference.
+* **wall time and peak memory** — from the `time_*.json` files, with the
+  `cmp/ref` ratio.
+
+Differences are expected for `Solver` / `Precision`, so a difference is not a
+failure — exit status is non-zero only when no comparable pair was found.
+Requires python `numpy` and `netCDF4`.
+
+### All timings at once
+
+```bash
+python3 post_scripts/timing_info.py           # -> timing_info.csv (repo root)
+python3 post_scripts/timing_info.py celia1990  # filter to some tests
+```
+
+gathers every `time_*.json` into one CSV: test, subtest, version, solver,
+precision, tag, wall_s, max_rss_mb, returncode.
+
+## Regenerating single-precision forcing
+
+The `*_single_precision.nc` forcing files are committed. If you add a test case
+or change the double-precision forcing, regenerate them with:
+
+```bash
+python3 tools/convert_to_float.py            # all tests in test_inventory.json
+python3 tools/convert_to_float.py celia1990  # or specific tests
+```
+
+Requires `cdo`, NCO (`ncap2`) and python `netCDF4`.
+
+## Note on parameters
+
+The v4 parameters are left out of the `summa_zLocalParamInfo.txt` files so that
+SUMMA v3 will run. To use them, add the following lines (and adjust as desired).
+`be_steps` applies to all v4 solver choices; the `rel*` / `abs*` tolerances only
+apply to `Solver` = `ida`. The values below are the recommended ones for
+`nrgConserv = closedForm`; for `enthalpyForm` the `absTolTemp*` values should be
+`1.0e2` instead of `1.0e-3`.
 
 ```
 be_steps                  |       1.0000 |       1.0000 |     512.0000
@@ -97,5 +193,3 @@ absTolMatric              |       1.0d-5 |       1.0d-10|       1.0d-1
 relTolAquifr              |       1.0d-5 |       1.0d-10|       1.0d-1
 absTolAquifr              |       1.0d-5 |       1.0d-10|       1.0d-1
 ```
-
-

@@ -11,7 +11,7 @@ globalHruParamFile   'syntheticTestCases/colbeck1976/summa_zLocalParamInfo.txt'
 globalGruParamFile   'syntheticTestCases/colbeck1976/summa_zBasinParamInfo.txt'
 attributeFile        'syntheticTestCases/colbeck1976/summa_zLocalAttributes.nc'
 trialParamFile       'syntheticTestCases/colbeck1976/summa_zParamTrial_colbeck1976-exp2.nc'
-forcingListFile      'syntheticTestCases/colbeck1976/summa_zForcingFileList_<PRECISION>
+forcingListFile      'syntheticTestCases/colbeck1976/summa_zForcingFileList_<PRECISION>'
 initConditionFile    'syntheticTestCases/colbeck1976/summa_zInitialCond_colbeck1976-exp2.nc'
 outFilePrefix        'colbeck1976-exp2'
 vegTableFile         'meta/VEGPARM.TBL'

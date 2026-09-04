@@ -1,0 +1,27 @@
+{
+  "Distributed_Settings": {
+    "distributed_mode": false,
+    "servers_list": [],
+    "port": -9999,
+    "total_hru_count": -9999,
+    "num_hru_per_batch": -9999
+  },
+  "Summa_Actor": {
+    "max_gru_per_job": 1000,
+    "enable_logging": false,
+    "log_dir": ""
+  },
+  "File_Access_Actor": {
+    "num_partitions_in_output_buffer": 8,
+    "num_timesteps_in_output_buffer": 500
+  },
+  "Job_Actor": {
+    "file_manager_path": "",
+    "max_run_attempts": 3,
+    "data_assimilation_mode": false
+  },
+  "HRU_Actor": {
+    "print_output": true,
+    "output_frequency": 1000
+  }
+}

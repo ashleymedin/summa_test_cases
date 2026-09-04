@@ -1,11 +1,14 @@
 {
-    "Test_List": ["syntheticTestCases","wrrPaperTestCases"],
-        
-    "Solver": "ida",
-    
+    "Test_List": ["syntheticTestCases", "wrrPaperTestCases", "northamerica2005"],
+
+    "Solver": "homegrown",
+
     "Precision": "single",
-    
+
     "Version": "non-actors",
-    
-    "Executables": ["/Users/amedin/Research/SummaSundials/summa/bin/summa_sundials.exe"]
+
+    "Executables": {
+        "non-actors": "/Users/amedin/Research/SummaSundials/summa/bin/summa_sundials.exe",
+        "actors": "/Users/amedin/Research/SummaActors/summa-actors-framework/bin/summa_actors.exe"
+    }
 }
