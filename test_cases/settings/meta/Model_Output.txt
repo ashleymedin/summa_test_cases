@@ -9,7 +9,6 @@ scalarRainPlusMelt        | 1
 scalarSWE                 | 1
 scalarThroughfallSnow     | 1
 scalarThroughfallRain     | 1
-scalarSnowSublimation     | 1
 scalarInfiltration        | 1
 scalarExfiltration        | 1
 scalarSurfaceRunoff       | 1
@@ -36,5 +35,3 @@ averageInstantRunoff      | 1
 averageRoutedRunoff       | 1
 scalarLAI                 | 1
 scalarSAI                 | 1
-
-
