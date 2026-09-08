@@ -44,11 +44,18 @@ SUMMA-Actors framework.
 | Key | Meaning |
 | --- | --- |
 | `Test_List` | List of tests to run. Use any `name` from `test_inventory.json`, or a group: `"syntheticTestCases"`, `"wrrPaperTestCases"`, `"multiGruTestCases"`, or `"all"`. The multiGru tests take much longer than the rest. |
+
+Each `test_inventory.json` entry is `{"name", "type"}`, plus an optional
+`"num_gru"` (how many GRUs `run` passes as `-g 1 <num_gru>`; defaults to 25 for
+`multiGruTestCases` and 1 otherwise). Set it explicitly for a domain that
+doesn't have at least 25 GRUs, e.g. `gulkana_wolverine` (2 GRUs: the Gulkana
+and Wolverine glacier basins, glacier-enabled decisions, merged into one
+6-HRU/2-GRU domain so both can be exercised in a single run).
 | `Solver` | `homegrown`, `ida`, or `kinsol` for SUMMA v4, or `v3` for older builds. Selects which `summa_zDecisions_<Solver>.txt` the file manager points at. |
 | `Precision` | `single` or `double`. Selects which forcing file list (and therefore which forcing `.nc`) the file manager points at. |
 | `Version` | `non-actors` or `actors`. Picks the executable from `Executables`; `actors` also gets `-c summa_actors_config.json`. |
-| `Executables` | Map of `Version` → executable path. List both to compare, or just the one you use. |
-| `Tag` | Optional free-form string added to the output name. Bump it to keep an otherwise-identical rerun (e.g. after a rebuild) from overwriting the previous one. |
+| `Executables` | Map of `Version` → executable path. List both to compare, or just the one you use. A `Version` can instead map to a `{name: path}` dict of two (or more) named builds of that *same* version — e.g. two `non-actors` builds, or two `actors` builds — to compare against each other; see below. |
+| `Tag` | Optional free-form string added to the output name. Bump it to keep an otherwise-identical rerun (e.g. after a rebuild) from overwriting the previous one. Also the axis used to compare two named builds of the same `Version` (see below). |
 
 `Version`, `Solver` and `Precision` are the three axes you can vary and compare.
 Any of them can be set in `settings.json` or overridden per run on the command
@@ -65,7 +72,7 @@ Example (`settings.json`):
 
 ```json
 {
-    "Test_List": ["syntheticTestCases", "wrrPaperTestCases", "northamerica2005"],
+    "Test_List": ["syntheticTestCases", "wrrPaperTestCases", "multiGruTestCases"],
     "Solver": "homegrown",
     "Precision": "single",
     "Version": "non-actors",
@@ -87,6 +94,34 @@ where `<suffix>` is `<Version>_<Solver>_<Precision>[_<Tag>]`.
 
 `-m` always overrides the `file_manager_path` inside `summa_actors_config.json`,
 so the generated file managers are what actually get run.
+
+### Comparing two builds of the same Version
+
+To compare two `non-actors` executables (e.g. before/after a code change), or
+two `actors` executables, against each other rather than against the other
+Version, give `Executables` a `{name: path}` dict for that Version instead of
+a single path:
+
+```json
+{
+    "Executables": {
+        "non-actors": {
+            "before": "/path/to/summa_before/bin/summa_sundials.exe",
+            "after":  "/path/to/summa_after/bin/summa_sundials.exe"
+        }
+    }
+}
+```
+
+Then pick which named build to run as an extra token to `run`, alongside any
+Version/Solver/Precision overrides. The name you pick also becomes this run's
+`Tag`, so the two runs' output files don't overwrite each other:
+
+```bash
+python3 summa_test_cases.py run non-actors before
+python3 summa_test_cases.py run non-actors after
+python3 post_scripts/verify_output.py Tag
+```
 
 ## Running
 
@@ -129,6 +164,9 @@ python3 post_scripts/verify_output.py Version
 python3 summa_test_cases.py run single && python3 summa_test_cases.py run double
 python3 post_scripts/verify_output.py Precision
 
+python3 summa_test_cases.py run non-actors before && python3 summa_test_cases.py run non-actors after
+python3 post_scripts/verify_output.py Tag           # two builds of the same Version, see above
+
 python3 post_scripts/verify_output.py Solver celia1990 mizoguchi1990   # only some tests
 python3 post_scripts/verify_output.py Version --per-var                # per-variable breakdown
 ```
@@ -166,6 +204,10 @@ python3 tools/convert_to_float.py celia1990  # or specific tests
 ```
 
 Requires `cdo`, NCO (`ncap2`) and python `netCDF4`.
+
+`cdo -b f32 copy` silently drops any dimensionless (scalar) forcing variable
+(e.g. `data_step`) instead of converting it, so `convert_to_float.py` copies
+those back from the source file afterward.
 
 ## Note on parameters
 

@@ -35,6 +35,36 @@ def hruid_is_float(path):
         ds.close()
 
 
+def restore_dropped_scalars(src_path, dst_path):
+    """
+    `cdo -b f32 copy` silently drops dimensionless (scalar) variables --
+    e.g. `data_step` -- instead of copying them through. Copy back anything
+    present in the source but missing from the converted file.
+    """
+    from netCDF4 import Dataset
+    src = Dataset(src_path)
+    try:
+        dst_check = Dataset(dst_path)
+        dst_vars = set(dst_check.variables)
+        dst_check.close()
+        missing = [name for name, var in src.variables.items()
+                   if var.dimensions == () and name not in dst_vars]
+        if not missing:
+            return
+        dst = Dataset(dst_path, "a")
+        try:
+            for name in missing:
+                svar = src.variables[name]
+                dvar = dst.createVariable(name, svar.dtype, ())
+                for attr in svar.ncattrs():
+                    dvar.setncattr(attr, svar.getncattr(attr))
+                dvar[...] = svar[...]
+        finally:
+            dst.close()
+    finally:
+        src.close()
+
+
 def convert_to_float(test_cases):
     for name in test_cases:
         path = os.path.join(INPUT_DIR, name)
@@ -54,6 +84,7 @@ def convert_to_float(test_cases):
                 os.remove(tmp)
             else:
                 os.replace(tmp, dst)
+            restore_dropped_scalars(src, dst)
 
 
 def main():

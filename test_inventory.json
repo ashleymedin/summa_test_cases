@@ -1,8 +1,5 @@
 {
   "tests": [
-     {"name": "northamerica2005",
-     "type": "multiGruTestCases"},
-
      {"name": "celia1990",
      "type": "syntheticTestCases"},
 
@@ -26,11 +23,18 @@
 
      {"name": "reynolds_groundwatr",
      "type": "wrrPaperTestCases"},
-     
+
      {"name": "senator_alb_method",
      "type": "wrrPaperTestCases"},
 
      {"name": "umpqua_snowIncept",
-     "type": "wrrPaperTestCases"}
+     "type": "wrrPaperTestCases"},
+
+     {"name": "northamerica2005",
+     "type": "multiGruTestCases"},
+
+     {"name": "gulkana_wolverine",
+     "type": "multiGruTestCases",
+     "num_gru": 2}
     ]
 }

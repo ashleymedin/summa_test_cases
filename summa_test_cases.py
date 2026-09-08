@@ -49,6 +49,20 @@ def initOutputDirs(test_cases):
         path = os.path.join(outputDir, test["name"])
         os.makedirs(path, exist_ok=True)
 
+
+def ensureActorsLogDir():
+    """
+    SUMMA-Actors does not create its "log_dir" recursively: with
+    "enable_logging" true but the directory missing, it prints "Unable to
+    Create Log Directory" and exits without running anything. Create it
+    ourselves so enabling logging in ACTORS_CONFIG works out of the box.
+    """
+    with open(ACTORS_CONFIG) as f:
+        cfg = json.load(f)
+    log_dir = cfg.get('Summa_Actor', {}).get('log_dir')
+    if log_dir:
+        os.makedirs(log_dir, exist_ok=True)
+
 """
 Clean up the output directories for the test cases
 """
@@ -145,7 +159,8 @@ def runTest(test_cases, summa_exe, meta, suffix):
     print(base_dir)
     print(output_path)
     for test in test_cases:
-        num_gru = "25" if test["type"] == "multiGruTestCases" else "1"
+        default_num_gru = 25 if test["type"] == "multiGruTestCases" else 1
+        num_gru = str(test.get("num_gru", default_num_gru))
         settings_dir = os.path.join(base_dir, "test_cases/settings")
         settings_dir = os.path.join(settings_dir, test["type"])
         settings_dir = os.path.join(settings_dir, test["name"])
@@ -169,19 +184,50 @@ def runTest(test_cases, summa_exe, meta, suffix):
                       f"({wall_s:.1f} s, {rss_mb:.0f} MB peak)")
 
 
-def pickExecutable(settings, version):
+def pickExecutable(settings, version, extra_tokens):
     """
-    "Executables" maps Version ("non-actors" / "actors") to an exe path. List
-    only the one you use if you only run one. Returns the path or None.
+    "Executables" maps Version ("non-actors" / "actors") to either a single
+    exe path, or a {name: path} dict of named builds of that same version
+    (e.g. two non-actors builds you want to compare against each other). List
+    only the one you use if you only run one.
+
+    For the dict form, one of `extra_tokens` (the run tokens left over after
+    Version/Solver/Precision were applied) must name which build to use; that
+    name becomes this run's Tag, so `post_scripts/verify_output.py Tag` can
+    pair the two builds' outputs up.
+
+    Returns (exe_path, tag_override) - tag_override is None unless a named
+    build was picked. Returns (None, None) on error.
     """
     exes = settings.get('Executables')
     if not isinstance(exes, dict) or version not in exes:
         print("No \"Executables\" entry for Version '" + version + "'")
-        return None
+        return None, None
     if version == "actors" and not os.path.isfile(os.path.abspath(ACTORS_CONFIG)):
         print("Running 'actors' but " + ACTORS_CONFIG + " is missing")
-        return None
-    return exes[version]
+        return None, None
+
+    entry = exes[version]
+    if not isinstance(entry, dict):
+        if extra_tokens:
+            print("Unknown run option(s): " + ", ".join(extra_tokens))
+            return None, None
+        return entry, None
+
+    names = list(entry)
+    if len(extra_tokens) > 1 or (extra_tokens and extra_tokens[0] not in entry):
+        print(f"Executables.{version} has named builds: " + ", ".join(names) +
+              " -- pick one, e.g. `run " + version + " " + names[0] + "`")
+        return None, None
+    if extra_tokens:
+        name = extra_tokens[0]
+    elif len(names) == 1:
+        name = names[0]
+    else:
+        print(f"Executables.{version} has multiple builds (" + ", ".join(names) +
+              "); specify which one, e.g. `run " + version + " " + names[0] + "`")
+        return None, None
+    return entry[name], name
 
 
 def applyRunOverrides(tokens, version, solver, precision):
@@ -189,7 +235,10 @@ def applyRunOverrides(tokens, version, solver, precision):
     `run` takes any number of Version / Solver / Precision values as bare
     tokens (e.g. `run actors ida`) and overrides that axis for this run only.
     The three value sets do not overlap, so each token maps to exactly one axis.
+    Anything left over (e.g. a named-build token) is returned for the caller
+    to interpret.
     """
+    leftover = []
     for tok in tokens:
         if tok in VERSIONS:
             version = tok
@@ -198,10 +247,8 @@ def applyRunOverrides(tokens, version, solver, precision):
         elif tok in PRECISIONS:
             precision = tok
         else:
-            print("Unknown run option '" + tok + "' "
-                  "(expected a Version, Solver or Precision value)")
-            return None
-    return version, solver, precision
+            leftover.append(tok)
+    return version, solver, precision, leftover
 
 
 def expandTestList(requested):
@@ -239,16 +286,18 @@ def main():
         cleanOutputDirs(test_list)
         cleanFileManagers(test_list)
     elif cmd == "run":
-        applied = applyRunOverrides(sys.argv[2:], version, solver, precision)
-        if applied is None:
-            return
-        version, solver, precision = applied
+        version, solver, precision, leftover = applyRunOverrides(
+            sys.argv[2:], version, solver, precision)
         if version not in VERSIONS:
             print("Version must be one of: " + ", ".join(VERSIONS))
             return
-        exe = pickExecutable(settings, version)
+        exe, exe_tag = pickExecutable(settings, version, leftover)
         if not exe:
             return
+        if exe_tag is not None:
+            tag = exe_tag
+        if version == "actors":
+            ensureActorsLogDir()
         initOutputDirs(test_list)
         setup(test_list, precision, solver)  # (re)generate file managers for THIS run
         meta = {"version": version, "solver": solver, "precision": precision, "tag": tag}

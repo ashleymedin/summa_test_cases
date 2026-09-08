@@ -1,5 +1,5 @@
 {
-    "Test_List": ["syntheticTestCases", "wrrPaperTestCases", "northamerica2005"],
+    "Test_List": ["syntheticTestCases","wrrPaperTestCases", "multiGruTestCases"],
 
     "Solver": "homegrown",
 

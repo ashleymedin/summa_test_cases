@@ -1,0 +1,20 @@
+controlVersion       'SUMMA_FILE_MANAGER_V3.0.0' !  file manager version
+simStartTime         '2008-10-01 00:00' !
+simEndTime           '2009-12-31 23:00' !
+tmZoneInfo           'utcTime' !
+outFilePrefix        'GulkanaWolverine' !
+settingsPath         '<BASEDIR>/settings/' !
+forcingPath          '<BASEDIR>/input_data/gulkana_wolverine/' !
+outputPath           '<BASEDIR>/output/gulkana_wolverine/' !
+initConditionFile    'multiGruTestCases/gulkana_wolverine/coldState.nc' ! Relative to settingsPath
+attributeFile        'multiGruTestCases/gulkana_wolverine/attributes.nc' ! Relative to settingsPath
+trialParamFile       'multiGruTestCases/gulkana_wolverine/trialParams.nc' ! Relative to settingsPath
+forcingListFile      'multiGruTestCases/gulkana_wolverine/forcingFileList_<PRECISION>' ! Relative to settingsPath
+decisionsFile        'multiGruTestCases/gulkana_wolverine/modelDecisions_<SOLVER>.txt' !  Relative to settingsPath
+outputControlFile    'multiGruTestCases/gulkana_wolverine/outputControl.txt' !  Relative to settingsPath
+globalHruParamFile   'multiGruTestCases/gulkana_wolverine/localParamInfo.txt' !  Relative to settingsPath
+globalGruParamFile   'multiGruTestCases/gulkana_wolverine/basinParamInfo.txt' !  Relative to settingsPath
+vegTableFile         'multiGruTestCases/gulkana_wolverine/TBL_VEGPARM.TBL' ! Relative to settingsPath
+soilTableFile        'multiGruTestCases/gulkana_wolverine/TBL_SOILPARM.TBL' ! Relative to settingsPath
+generalTableFile     'multiGruTestCases/gulkana_wolverine/TBL_GENPARM.TBL' ! Relative to settingsPath
+noahmpTableFile      'multiGruTestCases/gulkana_wolverine/TBL_MPTABLE.TBL' ! Relative to settingsPath

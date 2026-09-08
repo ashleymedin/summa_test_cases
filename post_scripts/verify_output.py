@@ -16,6 +16,9 @@ between the runs, then:
     python3 post_scripts/verify_output.py Version      # non-actors vs actors
     python3 post_scripts/verify_output.py Solver       # e.g. homegrown vs ida
     python3 post_scripts/verify_output.py Precision     # single vs double
+    python3 post_scripts/verify_output.py Tag           # two builds of the same
+                                                         # Version (see settings.json
+                                                         # Executables named-build form)
     python3 post_scripts/verify_output.py Solver celia1990 mizoguchi1990
     python3 post_scripts/verify_output.py Version --per-var
 
@@ -51,7 +54,7 @@ OUTPUT_DIR = os.path.join(REPO_ROOT, "test_cases", "output")
 GROUP_TYPES = ("syntheticTestCases", "multiGruTestCases", "wrrPaperTestCases")
 
 # tag component index for each comparison axis
-AXES = {"Version": 0, "Solver": 1, "Precision": 2}
+AXES = {"Version": 0, "Solver": 1, "Precision": 2, "Tag": 3}
 
 TAG_RE = re.compile(r"_G\d+-\d+_timestep\.nc$")
 
@@ -172,7 +175,7 @@ def main():
     args = [a for a in sys.argv[1:] if a != "--per-var"]
     per_var = "--per-var" in sys.argv[1:]
     if not args or args[0] not in AXES:
-        print("usage: verify_output.py <Version|Solver|Precision> [test ...] [--per-var]")
+        print("usage: verify_output.py <Version|Solver|Precision|Tag> [test ...] [--per-var]")
         return 1
     axis = args[0]
     idx = AXES[axis]
