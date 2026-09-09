@@ -8,7 +8,10 @@
     "Version": "non-actors",
 
     "Executables": {
-        "non-actors": "/Users/amedin/Research/SummaSundials/summa/bin/summa_sundials.exe",
+        "non-actors": {
+            "before": "/Users/amedin/Research/SummaDevelop/summa/bin/summa_sundials.exe",
+            "after": "/Users/amedin/Research/SummaSundials/summa/bin/summa_sundials.exe"
+        }
         "actors": "/Users/amedin/Research/SummaActors/summa-actors-framework/bin/summa_actors.exe"
     }
 }

@@ -35,6 +35,7 @@
 
      {"name": "gulkana_wolverine",
      "type": "multiGruTestCases",
-     "num_gru": 2}
+     "num_gru": 2,
+     "excluded_solvers": ["v3"]}
     ]
 }

@@ -266,6 +266,23 @@ def expandTestList(requested):
     return out
 
 
+def filterExcludedSolver(test_cases, solver):
+    """
+    Drop (with an error) any test that declares this Solver unsupported via
+    "excluded_solvers" in test_inventory.json, instead of generating a file
+    manager for a decisions file that doesn't exist (or isn't valid for that
+    test) and letting the executable fail deep into the run.
+    """
+    allowed = []
+    for test in test_cases:
+        if solver in test.get("excluded_solvers", []):
+            print(f"ERROR: {test['name']} does not support Solver '{solver}' -- skipping "
+                  f"(see \"excluded_solvers\" in test_inventory.json)")
+            continue
+        allowed.append(test)
+    return allowed
+
+
 def main():
     with open("settings.json", "r") as settings_file:
         settings = json.load(settings_file)
@@ -296,12 +313,16 @@ def main():
             return
         if exe_tag is not None:
             tag = exe_tag
+        run_list = filterExcludedSolver(test_list, solver)
+        if not run_list:
+            print("No tests left to run after excluding unsupported Solver combinations.")
+            return
         if version == "actors":
             ensureActorsLogDir()
-        initOutputDirs(test_list)
-        setup(test_list, precision, solver)  # (re)generate file managers for THIS run
+        initOutputDirs(run_list)
+        setup(run_list, precision, solver)  # (re)generate file managers for THIS run
         meta = {"version": version, "solver": solver, "precision": precision, "tag": tag}
-        runTest(test_list, exe, meta, runTag(version, solver, precision, tag))
+        runTest(run_list, exe, meta, runTag(version, solver, precision, tag))
     else:
         print("Invalid argument")
         print("Valid arguments are: run [<version>|<solver>|<precision> ...], clean")

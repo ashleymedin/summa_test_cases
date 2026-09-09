@@ -45,12 +45,18 @@ SUMMA-Actors framework.
 | --- | --- |
 | `Test_List` | List of tests to run. Use any `name` from `test_inventory.json`, or a group: `"syntheticTestCases"`, `"wrrPaperTestCases"`, `"multiGruTestCases"`, or `"all"`. The multiGru tests take much longer than the rest. |
 
-Each `test_inventory.json` entry is `{"name", "type"}`, plus an optional
-`"num_gru"` (how many GRUs `run` passes as `-g 1 <num_gru>`; defaults to 25 for
-`multiGruTestCases` and 1 otherwise). Set it explicitly for a domain that
-doesn't have at least 25 GRUs, e.g. `gulkana_wolverine` (2 GRUs: the Gulkana
-and Wolverine glacier basins, glacier-enabled decisions, merged into one
-6-HRU/2-GRU domain so both can be exercised in a single run).
+Each `test_inventory.json` entry is `{"name", "type"}`, plus two optional
+keys:
+* `"num_gru"` - how many GRUs `run` passes as `-g 1 <num_gru>`; defaults to 25
+  for `multiGruTestCases` and 1 otherwise. Set it explicitly for a domain that
+  doesn't have at least 25 GRUs, e.g. `gulkana_wolverine` (2 GRUs: the Gulkana
+  and Wolverine glacier basins, glacier-enabled decisions, merged into one
+  6-HRU/2-GRU domain so both can be exercised in a single run).
+* `"excluded_solvers"` - `Solver` values this test doesn't support. `run`
+  skips the test with an error instead of generating a file manager for it.
+  `gulkana_wolverine` excludes `"v3"`: `v3` (an older SUMMA build) doesn't
+  support the glacier spatial-domain schema (`dom`/`glac`/`grid`/`xgrid`/
+  `ygrid` dimensions) this domain's `attributes.nc`/`coldState.nc` use.
 | `Solver` | `homegrown`, `ida`, or `kinsol` for SUMMA v4, or `v3` for older builds. Selects which `summa_zDecisions_<Solver>.txt` the file manager points at. |
 | `Precision` | `single` or `double`. Selects which forcing file list (and therefore which forcing `.nc`) the file manager points at. |
 | `Version` | `non-actors` or `actors`. Picks the executable from `Executables`; `actors` also gets `-c summa_actors_config.json`. |
