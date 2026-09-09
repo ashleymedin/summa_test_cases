@@ -146,8 +146,14 @@ def compare_files(ref_file, cmp_file, variables, per_var):
         a = _as_float(ref.variables[var])
         b = _as_float(cmp.variables[var])
         if a.shape != b.shape:
-            print(f"    {var}: SHAPE MISMATCH {a.shape} vs {b.shape}")
-            continue
+            # tolerate a difference that is only singleton (length-1) dimensions,
+            # e.g. (1007, 50, 1) vs (1007, 50)
+            sa, sb = np.squeeze(a), np.squeeze(b)
+            if sa.shape == sb.shape:
+                a, b = sa, sb
+            else:
+                print(f"    {var}: SHAPE MISMATCH {a.shape} vs {b.shape}")
+                continue
         d = np.abs(a - b)
         d = np.where(np.isnan(d), 0.0, d)
         denom = np.where(np.abs(a) > 0, np.abs(a), np.nan)
@@ -232,7 +238,7 @@ def main():
                     n_pairs += 1
                     label = f"{test_name}/{prefix}"
                     if per_var:
-                        print(f"\n{label}  [{held}]  {ref_val} vs {cmp_val}")
+                        print(f"\n{label}  [{held}]  ref={ref_val} vs cmp={cmp_val}")
                     ref_path, cmp_path = by_axis[ref_val], by_axis[cmp_val]
                     stats = compare_files(ref_path, cmp_path, variables, per_var)
                     ref_rs = load_run_stats(test_name, sub_test,
@@ -246,30 +252,30 @@ def main():
               f"changing only {axis} between runs.")
         return 1
 
-    print(f"\n{axis} comparison  -  output values")
-    print(f"{'test / prefix':<40}{'held fixed':<20}{'compared':<24}"
+    print(f"\n{axis} comparison  -  output values   (ref = first {axis}, cmp = second)")
+    print(f"{'test / prefix':<40}{'held fixed':<30}  {'ref vs cmp':<24}"
           f"{'ndiff':>10}{'max|d|':>12}{'rms':>12}{'maxrel':>12}")
-    print("-" * 130)
+    print("-" * 142)
     for label, held, comp, s, _r, _c in rows:
-        print(f"{label:<40}{held:<20}{comp:<24}"
+        print(f"{label:<40}{held:<30}  {comp:<24}"
               f"{s['n_diff']:>10}{s['max_abs']:>12.3e}{s['rms']:>12.3e}{s['max_rel']:>12.3e}")
 
-    print(f"\n{axis} comparison  -  wall time (s) and peak memory (MB)")
-    print(f"{'test / prefix':<40}{'held fixed':<20}{'compared':<24}"
+    print(f"\n{axis} comparison  -  wall time (s) and peak memory (MB)   (ref = first {axis}, cmp = second)")
+    print(f"{'test / prefix':<40}{'held fixed':<30}  {'ref vs cmp':<24}"
           f"{'t.ref':>9}{'t.cmp':>9}{'t.cmp/ref':>11}{'mem.ref':>10}{'mem.cmp':>10}{'mem c/r':>9}")
-    print("-" * 142)
+    print("-" * 154)
 
     def ratio(a, b):
         return f"{b / a:>.2f}x" if a else "  n/a"
 
     for label, held, comp, _s, r, c in rows:
         if not r or not c:
-            print(f"{label:<40}{held:<20}{comp:<24}  missing time_*.json")
+            print(f"{label:<40}{held:<30}  {comp:<24}  missing time_*.json")
             continue
-        print(f"{label:<40}{held:<20}{comp:<24}"
+        print(f"{label:<40}{held:<30}  {comp:<24}"
               f"{r['wall_s']:>9.2f}{c['wall_s']:>9.2f}{ratio(r['wall_s'], c['wall_s']):>11}"
               f"{r['max_rss_mb']:>10.1f}{c['max_rss_mb']:>10.1f}{ratio(r['max_rss_mb'], c['max_rss_mb']):>9}")
-    print("-" * 142)
+    print("-" * 154)
     print(f"pairs compared: {n_pairs}")
     return 0
 
