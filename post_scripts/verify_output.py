@@ -58,6 +58,12 @@ AXES = {"Version": 0, "Solver": 1, "Precision": 2, "Tag": 3}
 
 TAG_RE = re.compile(r"_G\d+-\d+_timestep\.nc$")
 
+# Floor for the relative-difference denominator, as a fraction of the variable's own
+# largest magnitude.  Variables that legitimately pass through zero (iLayerHeight at
+# the ground surface, night-time fluxes, summer ice content) otherwise divide a
+# round-off difference by round-off dust and report a meaningless maxrel
+REL_FLOOR = 1e-12
+
 
 def load_test_list(requested):
     """Expand a list of test names / group names into inventory entries."""
@@ -156,8 +162,14 @@ def compare_files(ref_file, cmp_file, variables, per_var):
                 continue
         d = np.abs(a - b)
         d = np.where(np.isnan(d), 0.0, d)
-        denom = np.where(np.abs(a) > 0, np.abs(a), np.nan)
-        rel = d / denom
+        abs_a = np.abs(a)
+        scale = float(np.nanmax(abs_a)) if abs_a.size and np.isfinite(abs_a).any() else 0.0
+        if scale > 0.0:
+            denom = np.maximum(abs_a, REL_FLOOR * scale)
+        else:  # variable is identically zero (or all-NaN): no meaningful relative scale
+            denom = np.where(abs_a > 0, abs_a, np.nan)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            rel = d / denom
         v_max = float(d.max()) if d.size else 0.0
         v_rel = float(np.nanmax(rel)) if np.isfinite(rel).any() else 0.0
         n_total += d.size
