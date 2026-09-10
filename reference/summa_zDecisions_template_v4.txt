@@ -9,7 +9,7 @@
 ! ***********************************************************************************************************************
 ! ***********************************************************************************************************************
 soilCatTbl                      ROSETTA         ! (01) soil-category dataset
-vegeParTbl                      USGS            ! (02) vegetation category dataset
+vegeParTbl                      MODIFIED_IGBP_MODIS_NOAH ! (02) vegetation category dataset
 soilStress                      NoahType        ! (03) choice of function for the soil moisture control on stomatal resistance
 stomResist                      BallBerry       ! (04) choice of function for stomatal resistance
 ! ***********************************************************************************************************************
