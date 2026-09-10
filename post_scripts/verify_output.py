@@ -264,31 +264,76 @@ def main():
               f"changing only {axis} between runs.")
         return 1
 
-    print(f"\n{axis} comparison  -  output values   (ref = first {axis}, cmp = second)")
-    print(f"{'test / prefix':<40}{'held fixed':<30}  {'ref vs cmp':<24}"
-          f"{'ndiff':>10}{'max|d|':>12}{'rms':>12}{'maxrel':>12}")
-    print("-" * 142)
-    for label, held, comp, s, _r, _c in rows:
-        print(f"{label:<40}{held:<30}  {comp:<24}"
-              f"{s['n_diff']:>10}{s['max_abs']:>12.3e}{s['rms']:>12.3e}{s['max_rel']:>12.3e}")
+    # columns that never change across the rows are hoisted into a caption
+    # line instead of being repeated on every row
+    held_vals = {held for _, held, *_ in rows}
+    comp_vals = {comp for _, _, comp, *_ in rows}
+    held_const = held_vals.pop() if len(held_vals) == 1 else None
+    comp_const = comp_vals.pop() if len(comp_vals) == 1 else None
 
-    print(f"\n{axis} comparison  -  wall time (s) and peak memory (MB)   (ref = first {axis}, cmp = second)")
-    print(f"{'test / prefix':<40}{'held fixed':<30}  {'ref vs cmp':<24}"
-          f"{'t.ref':>9}{'t.cmp':>9}{'t.cmp/ref':>11}{'mem.ref':>10}{'mem.cmp':>10}{'mem c/r':>9}")
-    print("-" * 154)
+    caption = []
+    if held_const:
+        caption.append(f"held fixed: {held_const}")
+    if comp_const:
+        a, _, b = comp_const.partition(" vs ")
+        caption.append(f"ref = {a}   cmp = {b}")
+    caption = "     ".join(caption)
+
+    # variable middle columns (only present when they actually vary)
+    mids = []
+    if not held_const:
+        mids.append(("held fixed", [r[1] for r in rows]))
+    if not comp_const:
+        mids.append(("ref vs cmp", [r[2] for r in rows]))
+    mids = [(h, cs, max(len(h), *(len(x) for x in cs))) for h, cs in mids]
+
+    w1 = max(len("test / prefix"), *(len(r[0]) for r in rows))
+
+    def row_line(label, mid_cells, num_cells):
+        s = f"{label:<{w1}}"
+        for (_h, _cs, w), v in zip(mids, mid_cells):
+            s += "  " + f"{v:<{w}}"
+        for v, w in num_cells:
+            s += f"{v:>{w}}"
+        return s
 
     def ratio(a, b):
-        return f"{b / a:>.2f}x" if a else "  n/a"
+        return f"{b / a:.2f}x" if a else "n/a"
 
-    for label, held, comp, _s, r, c in rows:
-        if not r or not c:
-            print(f"{label:<40}{held:<30}  {comp:<24}  missing time_*.json")
-            continue
-        print(f"{label:<40}{held:<30}  {comp:<24}"
-              f"{r['wall_s']:>9.2f}{c['wall_s']:>9.2f}{ratio(r['wall_s'], c['wall_s']):>11}"
-              f"{r['max_rss_mb']:>10.1f}{c['max_rss_mb']:>10.1f}{ratio(r['max_rss_mb'], c['max_rss_mb']):>9}")
-    print("-" * 154)
-    print(f"pairs compared: {n_pairs}")
+    def emit(title, num_headers, make_cells):
+        hdr = row_line("test / prefix", [h for h, _cs, _w in mids], num_headers)
+        print(f"\n{axis} comparison  —  {title}")
+        if caption:
+            print(caption + "\n")
+        print(hdr)
+        print("-" * len(hdr))
+        for r in rows:
+            held, comp = r[1], r[2]
+            mid_cells = ([held] if not held_const else []) + ([comp] if not comp_const else [])
+            cells = make_cells(r)
+            if cells is None:
+                print(row_line(r[0], mid_cells, [("  missing time_*.json", 0)]))
+            else:
+                print(row_line(r[0], mid_cells, cells))
+        print("-" * len(hdr))
+
+    NW = 13
+    emit("output values",
+         [("ndiff", NW), ("max|d|", NW), ("rms", NW), ("maxrel", NW)],
+         lambda r: [(f"{r[3]['n_diff']:,}", NW),
+                    (f"{r[3]['max_abs']:.3e}", NW),
+                    (f"{r[3]['rms']:.3e}", NW),
+                    (f"{r[3]['max_rel']:.3e}", NW)])
+
+    emit("wall time (s) and peak memory (MB)",
+         [("t.ref", 9), ("t.cmp", 9), ("t.c/r", 8), ("mem.ref", 10), ("mem.cmp", 10), ("mem.c/r", 9)],
+         lambda r: None if not (r[4] and r[5]) else [
+             (f"{r[4]['wall_s']:.2f}", 9), (f"{r[5]['wall_s']:.2f}", 9),
+             (ratio(r[4]['wall_s'], r[5]['wall_s']), 8),
+             (f"{r[4]['max_rss_mb']:.1f}", 10), (f"{r[5]['max_rss_mb']:.1f}", 10),
+             (ratio(r[4]['max_rss_mb'], r[5]['max_rss_mb']), 9)])
+
+    print(f"\npairs compared: {n_pairs}")
     return 0
 
 
