@@ -36,6 +36,7 @@ thCondSnow                      jrdn1991        ! (24) choice of thermal conduct
 thCondSoil                      funcSoilWet     ! (25) choice of thermal conductivity representation for soil
 spatial_gw                      localColumn     ! (26) choice of method for the spatial representation of groundwater
 subRouting                      timeDlay        ! (27) choice of method for sub-grid routing
+deepTherml                      none            ! (28) choice of deep thermal state below the soil column
 ! ***********************************************************************************************
 ! ***** description of the options available -- nothing below this point is read ****************
 ! ***********************************************************************************************
@@ -87,6 +88,7 @@ subRouting                      timeDlay        ! (27) choice of method for sub-
 ! (12) choice of lower boundary conditions for thermodynamics
 ! presTemp  ! prescribed temperature
 ! zeroFlux  ! zero flux
+! presFlux  ! prescribed energy flux, the geothermal heat flux (parameter lowerBoundNrgFlux)
 ! -----------------------------------------------------------------------------------------------
 ! (13) choice of upper boundary conditions for soil hydrology
 ! presHead  ! prescribed head (volumetric liquid water content for mixed form of Richards' eqn)
@@ -157,4 +159,10 @@ subRouting                      timeDlay        ! (27) choice of method for sub-
 ! (27) choice of method for sub-grid routing
 ! timeDlay  ! time-delay histogram
 ! qInstant  ! instantaneous routing
+! -----------------------------------------------------------------------------------------------
+! (28) choice of deep thermal state below the soil column, which sets the temperature of the
+!     water the groundwater hands to the channel
+! none        ! the base of the soil column itself, floored at freezing (default)
+! aquiferTemp ! a well-mixed temperature carried by the big-bucket aquifer store (needs groundwatr = bigBuckt)
+! airTempGW   ! groundwater temperature scaled from the air temperature, Wade et al. (2024)
 ! ***********************************************************************************************
