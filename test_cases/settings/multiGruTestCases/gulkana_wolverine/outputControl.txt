@@ -13,6 +13,7 @@ scalarInfiltration    | 1
 scalarSoilDrainage    | 1
 scalarSoilBaseflow    | 1
 scalarAquiferBaseflow | 1
+scalarAquiferTemp     | 1
 scalarTotalRunoff     | 1
 scalarNetRadiation    | 1
 scalarLatHeatTotal    | 1
