@@ -26,10 +26,9 @@
 ! ====================================================================
 upperBoundHead            |       0.0000 |     -10.0000 |       1.0000
 lowerBoundHead            |      -10.000 |     -50.0000 |      -1.0000
-upperBoundTheta           |       0.2004 |       0.1020 |       0.3680
-lowerBoundTheta           |       0.1100 |       0.1020 |       0.3680
 upperBoundTemp            |     272.1600 |     270.1600 |     280.1600
 lowerBoundTemp            |     274.1600 |     270.1600 |     280.1600
+lowerBoundNrgFlux         |       0.0600 |       0.0000 |       0.2000
 ! ====================================================================
 ! precipitation partitioning
 ! ====================================================================
@@ -136,7 +135,7 @@ rootingDepth              |       2.0000 |       0.1000 |       6.0000
 rootDistExp               |       1.0000 |       0.0100 |       1.0000
 plantWiltPsi              |    -150.0000 |    -500.0000 |       0.0000
 soilStressParam           |       5.8000 |       4.3600 |       6.3700
-critSoilWilting           |       0.0800 |       0.0000 |       1.0000
+critSoilWilting           |       0.0750 |       0.0000 |       1.0000
 critSoilTranspire         |       0.1750 |       0.0000 |       1.0000
 critAquiferTranspire      |       0.2000 |       0.1000 |      10.0000
 minStomatalResistance     |      50.0000 |      10.0000 |     200.0000
@@ -176,7 +175,7 @@ kAnisotropic              |       1.0000 |       0.0001 |      10.0000
 zScale_TOPMODEL           |       2.5000 |       1.0000 |      10.0000
 f_hydCond                 |       3.0000 |       0.1000 |      10.0000
 compactedDepth            |       1.0000 |       0.0000 |       1.0000
-aquiferBaseflowRate       |      5.0d-08 |       0.0000 |       0.1000
+aquiferBaseflowRate       |       0.1000 |       0.0000 |       0.1000
 aquiferScaleFactor        |       0.3500 |       0.1000 |      10.0000
 aquiferBaseflowExp        |       2.0000 |       1.0000 |      10.0000
 qSurfScale                |      50.0000 |       1.0000 |     100.0000
@@ -185,6 +184,14 @@ specificStorage           |       1.d-06 |       1.d-07 |       1.d-05
 f_impede                  |       2.0000 |       1.0000 |      10.0000
 soilIceScale              |       0.1300 |       0.0001 |       1.0000
 soilIceCV                 |       0.4500 |       0.1000 |       5.0000
+! ====================================================================
+! deep thermal state and hyporheic exchange
+! ====================================================================
+thCond_bedrock            |       2.5000 |       0.1000 |      10.0000
+theta_sat_bedrock         |       0.0500 |       0.0010 |       0.5000
+gwTempWindow              |       7.0000 |       1.0000 |      60.0000
+hypFrac                   |       0.2000 |       0.0000 |       1.0000
+hypLag                    |       6.0000 |       1.0000 |      24.0000
 ! ====================================================================
 ! algorithmic control parameters
 ! ====================================================================
@@ -234,4 +241,4 @@ albedoOpenWatNearIR       |       0.0600 |       0.0300 |       0.1500
 z0Water                   |       0.0005 |       0.0001 |       0.0100
 z0Ice                     |       0.0010 |       0.0001 |       0.0500
 glacierWindFactor         |       1.0000 |       1.0000 |       3.0000
-glacierTempReduction      |       0.0000 |       0.0000 |       6.5000
+glacierTempReduction      |       0.0000 |       0.0000 |       2.5000
